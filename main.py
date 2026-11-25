@@ -112,20 +112,20 @@ TEXTS = {
     "en": {
         "welcome": WELCOME_MESSAGE,
         "menu_prompt": MENU_PROMPT_MESSAGE,
-        "btn_get_number": "📞 𝗚𝗘𝗧 𝗡𝗨𝗠𝗕𝗘𝗥",
-        "btn_hot_ranges": "🔥 𝗛𝗢𝗧 𝗥𝗔𝗡𝗚𝗘𝗦",
-        "btn_search_otp": "🔍 𝗦𝗘𝗔𝗥𝗖𝗛 𝗢𝗧𝗣",
-        "btn_2fa": "⚡ 𝗚𝗘𝗧 𝟮𝗙𝗔",
-        "btn_balance": "💰 𝗕𝗔𝗟𝗔𝗡𝗖𝗘",
-        "btn_my_numbers": "📜 𝗠𝗬 𝗡𝗨𝗠𝗕𝗘𝗥𝗦",
-        "btn_my_withdraws": "🧾 𝗠𝗬 𝗪𝗜𝗧𝗛𝗗𝗥𝗔𝗪𝗦",
-        "btn_promo": "🎟️ 𝗣𝗥𝗢𝗠𝗢 𝗖𝗢𝗗𝗘",
-        "btn_refer": "🎁 𝗥𝗘𝗙𝗘𝗥 𝗔𝗡𝗗 𝗘𝗔𝗥𝗡",
-        "btn_profile": "👤 𝗣𝗥𝗢𝗙𝗜𝗟𝗘",
-        "btn_leaderboard": "🏆 𝗟𝗘𝗔𝗗𝗘𝗥𝗕𝗢𝗔𝗥𝗗",
-        "btn_support": "💬 𝗦𝗨𝗣𝗣𝗢𝗥𝗧",
-        "btn_traffic": "🚦 𝗧𝗥𝗔𝗙𝗙𝗜𝗖",
-        "btn_admin_panel": "⚙️ 𝗔𝗗𝗠𝗜𝗡 𝗣𝗔𝗡𝗘𝗟 ⚙️",
+        "btn_get_number": "🔵📞 𝗚𝗘𝗧 𝗡𝗨𝗠𝗕𝗘𝗥",
+        "btn_hot_ranges": "🔴🔥 𝗛𝗢𝗧 𝗥𝗔𝗡𝗚𝗘𝗦",
+        "btn_search_otp": "🟣🔍 𝗦𝗘𝗔𝗥𝗖𝗛 𝗢𝗧𝗣",
+        "btn_2fa": "🟡⚡ 𝗚𝗘𝗧 𝟮𝗙𝗔",
+        "btn_balance": "🟢💰 𝗕𝗔𝗟𝗔𝗡𝗖𝗘",
+        "btn_my_numbers": "🔵📜 𝗠𝗬 𝗡𝗨𝗠𝗕𝗘𝗥𝗦",
+        "btn_my_withdraws": "🟣🧾 𝗠𝗬 𝗪𝗜𝗧𝗛𝗗𝗥𝗔𝗪𝗦",
+        "btn_promo": "🟡🎟️ 𝗣𝗥𝗢𝗠𝗢 𝗖𝗢𝗗𝗘",
+        "btn_refer": "🟢🎁 𝗥𝗘𝗙𝗘𝗥 𝗔𝗡𝗗 𝗘𝗔𝗥𝗡",
+        "btn_profile": "🔵👤 𝗣𝗥𝗢𝗙𝗜𝗟𝗘",
+        "btn_leaderboard": "🟡🏆 𝗟𝗘𝗔𝗗𝗘𝗥𝗕𝗢𝗔𝗥𝗗",
+        "btn_support": "🟢💬 𝗦𝗨𝗣𝗣𝗢𝗥𝗧",
+        "btn_traffic": "🔴🚦 𝗧𝗥𝗔𝗙𝗙𝗜𝗖",
+        "btn_admin_panel": "🟣⚙️ 𝗔𝗗𝗠𝗜𝗡 𝗣𝗔𝗡𝗘𝗟 ⚙️",
         "banned": "🚫 YOU ARE BANNED 🚫",
         "maintenance": "🛠️ <b>BOT UNDER MAINTENANCE</b>\n\n<blockquote>⚙️ System is being upgraded by <b>MI TEAM</b>.\n⏳ Please try again shortly!</blockquote>",
         "support_text": "💬 *SUPPORT & LINKS* 🎧\n\nTap a button below to connect with us 📩",
@@ -157,20 +157,20 @@ TEXTS = {
     "bn": {
         "welcome": WELCOME_MESSAGE_BN,
         "menu_prompt": MENU_PROMPT_MESSAGE_BN,
-        "btn_get_number": "📞 নাম্বার নিন",
-        "btn_hot_ranges": "🔥 হট রেঞ্জ",
-        "btn_search_otp": "🔍 ওটিপি খুঁজুন",
-        "btn_2fa": "⚡ 2FA কোড",
-        "btn_balance": "💰 ব্যালেন্স",
-        "btn_my_numbers": "📜 আমার নাম্বার",
-        "btn_my_withdraws": "🧾 উইথড্র হিস্ট্রি",
-        "btn_promo": "🎟️ প্রোমো কোড",
-        "btn_refer": "🎁 রেফার ও আয়",
-        "btn_profile": "👤 প্রোফাইল",
-        "btn_leaderboard": "🏆 লিডারবোর্ড",
-        "btn_support": "💬 সাপোর্ট",
-        "btn_traffic": "🚦 ট্রাফিক",
-        "btn_admin_panel": "⚙️ অ্যাডমিন প্যানেল ⚙️",
+        "btn_get_number": "🔵📞 নাম্বার নিন",
+        "btn_hot_ranges": "🔴🔥 হট রেঞ্জ",
+        "btn_search_otp": "🟣🔍 ওটিপি খুঁজুন",
+        "btn_2fa": "🟡⚡ 2FA কোড",
+        "btn_balance": "🟢💰 ব্যালেন্স",
+        "btn_my_numbers": "🔵📜 আমার নাম্বার",
+        "btn_my_withdraws": "🟣🧾 উইথড্র হিস্ট্রি",
+        "btn_promo": "🟡🎟️ প্রোমো কোড",
+        "btn_refer": "🟢🎁 রেফার ও আয়",
+        "btn_profile": "🔵👤 প্রোফাইল",
+        "btn_leaderboard": "🟡🏆 লিডারবোর্ড",
+        "btn_support": "🟢💬 সাপোর্ট",
+        "btn_traffic": "🔴🚦 ট্রাফিক",
+        "btn_admin_panel": "🟣⚙️ অ্যাডমিন প্যানেল ⚙️",
         "banned": "🚫 আপনাকে ব্যান করা হয়েছে 🚫",
         "maintenance": "🛠️ <b>বট মেইনটেন্যান্সে আছে</b>\n\n<blockquote>⚙️ <b>MI TEAM</b> সিস্টেম আপডেট করছে।\n⏳ কিছুক্ষণ পর আবার চেষ্টা করুন!</blockquote>",
         "support_text": "💬 *সাপোর্ট ও প্রয়োজনীয় লিংক* 🎧\n\nযোগাযোগ করতে নিচের বাটনে চাপুন 📩",
@@ -1794,7 +1794,8 @@ _SVC_ICONS = {
     "PAYPAL": "💰", "AMAZON": "📦", "MICROSOFT": "🪟", "APPLE": "🍎",
 }
 
-_COLOR_CYCLE = ["primary", "success", "danger"]
+_COLOR_CYCLE = ["primary", "success", "danger", "primary", "success"]
+_FIVE_COLOR_BADGES = ["🔵", "🟢", "🔴", "🟣", "🟡"]
 
 
 def _get_merged_services():
@@ -1978,10 +1979,11 @@ def _build_countries_keyboard(ranges, service_idx):
         prefix = re.sub(r"[xX]+$", "", str(r)).strip()
         prefix_clean = re.sub(r"\D", "", prefix)
         flag, cname = get_country_info(prefix_clean)
-        label = f"{flag} {cname}"
-        if label not in seen:
-            seen[label] = i
-            color = _COLOR_CYCLE[len(btns) % 3]
+        color_badge = _FIVE_COLOR_BADGES[len(btns) % len(_FIVE_COLOR_BADGES)]
+        label = f"{color_badge} {flag} {cname}"
+        if cname not in seen:
+            seen[cname] = i
+            color = _COLOR_CYCLE[len(btns) % len(_COLOR_CYCLE)]
             btns.append(make_colored_btn(label, color_style=color, callback_data=f"rng_{i}"))
     rows = [btns[j:j + 2] for j in range(0, len(btns), 2)]
     rows.append([make_colored_btn("◀️ BACK", color_style="danger", callback_data="back_services")])
@@ -2211,7 +2213,7 @@ async def fast_allocate_number(query, context, range_text, sid):
     if sid:
         btn_rows.append([make_colored_btn(f"📱 APP: {sid} ({len(valid_entries)} NUMBERS)", color_style="primary", callback_data="noop_svc")])
 
-    btn_colors = ["success", "primary", "danger"]
+    btn_colors = ["success", "primary", "danger", "primary", "success"]
     for idx, entry in enumerate(valid_entries, 1):
         c_num = entry["num"]
         active_numbers[c_num] = {"uid": uid, "range": range_text, "timestamp": datetime.now()}
@@ -2420,7 +2422,7 @@ async def process_numbers(update_or_query, context, range_text, count):
         _sid = _svc.get("sid", "") if _svc.get("range") == range_text else ""
         if len(num_entries) > 1:
             _rows = []
-            _c_cycle = ["success", "primary", "danger"]
+            _c_cycle = ["success", "primary", "danger", "primary", "success"]
             for _idx, _ent in enumerate(num_entries, 1):
                 _lbl = f"📋 COPY #{_idx}: +{_ent['num']}"
                 _clr = _c_cycle[(_idx - 1) % 3]
