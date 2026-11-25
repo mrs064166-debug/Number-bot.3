@@ -450,7 +450,7 @@ def make_colored_btn(text, color_style=None, **kwargs):
 
 
 def build_number_keyboard(num=None, v2=False, flag="", sid=""):
-    new_btn = make_colored_btn("🔄 NEW 3 NUMBERS", color_style="success", callback_data="same_range")
+    new_btn = make_colored_btn("🔄 NEW NUMBER", color_style="success", callback_data="same_range")
     grp_btn = make_colored_btn("📢 CHECK OTP GROUP", color_style="danger", url=OTP_GROUP_LINK)
     if not v2:
         return InlineKeyboardMarkup([[new_btn], [grp_btn]])
@@ -1883,9 +1883,9 @@ def set_service_design(v):
 def _legend_html():
     v = get_service_design()
     if v == 2:
-        return "\n<i>🟢 Many  🔵 Medium  🔴 Few  |  📦 3 Numbers at Once</i>"
+        return "\n<i>🟢 Many  🔵 Medium  🔴 Few</i>"
     if v == 3:
-        return "\n<i>▰▰▰ stock level  ·  📦 3 Numbers at Once</i>"
+        return "\n<i>▰▰▰ stock level</i>"
     return "\n<i>📦 3 Numbers at Once</i>"
 
 
@@ -2147,8 +2147,8 @@ async def fast_allocate_number(query, context, range_text, sid):
     # সুন্দর ক্লিক ও লোডিং অ্যানিমেশন
     click_frames = [
         f"⚡ <b>CONNECTING TO {html.escape(str(sid))} SERVER...</b>\n<code>[███░░░░░░░] 30%</code>",
-        f"🔍 <b>FETCHING 3 FRESH NUMBERS...</b>\n<code>[███████░░░] 70%</code>",
-        f"✨ <b>PREPARING YOUR NUMBERS...</b>\n<code>[██████████] 100%</code>",
+        f"🔍 <b>FETCHING FRESH NUMBER...</b>\n<code>[███████░░░] 70%</code>",
+        f"✨ <b>PREPARING YOUR NUMBER...</b>\n<code>[██████████] 100%</code>",
     ]
     for cf in click_frames:
         try:
@@ -2158,12 +2158,9 @@ async def fast_allocate_number(query, context, range_text, sid):
             pass
 
     try:
-        # একসাথে ৩টি নাম্বার ফেচ করা হচ্ছে
-        results = await asyncio.gather(
-            fetch_number_async(range_text),
-            fetch_number_async(range_text),
-            fetch_number_async(range_text),
-        )
+        # ১টি নাম্বার ফেচ করা হচ্ছে
+        res_single = await fetch_number_async(range_text)
+        results = [res_single] if res_single else []
     except Exception as e:
         await query.message.edit_text(f"❌ Server error: {str(e)[:100]}")
         return
@@ -2200,51 +2197,48 @@ async def fast_allocate_number(query, context, range_text, sid):
 
     country_flag, country_name = get_country_info(valid_entries[0]["num"])
 
-    num_blocks = []
+    entry = valid_entries[0]
+    c_num = entry["num"]
+    active_numbers[c_num] = {"uid": uid, "range": range_text, "timestamp": datetime.now()}
+    save_number_range_info(uid, c_num, range_text)
+    record_user_number_history(uid, c_num, range_text, entry["otp"] if entry["otp_now"] else None)
+
     btn_rows = []
     if sid:
-        btn_rows.append([make_colored_btn(f"📱 APP: {sid} ({len(valid_entries)} NUMBERS)", color_style="primary", callback_data="noop_svc")])
+        btn_rows.append([make_colored_btn(f"📱 APP: {sid}", color_style="primary", callback_data="noop_svc")])
 
-    btn_colors = ["success", "primary", "danger"]
-    for idx, entry in enumerate(valid_entries, 1):
-        c_num = entry["num"]
-        active_numbers[c_num] = {"uid": uid, "range": range_text, "timestamp": datetime.now()}
-        save_number_range_info(uid, c_num, range_text)
-        record_user_number_history(uid, c_num, range_text, entry["otp"] if entry["otp_now"] else None)
+    if entry["otp_now"] and entry["otp"]:
+        otp_safe = html.escape(str(entry["otp"]))
+        add_otp_received(uid)
+        status_block = (
+            f"<blockquote>📞 <b>NUMBER:</b> {country_flag} <code>+{c_num}</code>\n"
+            f"🔑 <b>OTP:</b> <code>{otp_safe}</code> ✅</blockquote>"
+        )
+    else:
+        status_block = (
+            f"<blockquote>📞 <b>NUMBER:</b> {country_flag} <code>+{c_num}</code>\n"
+            f"📩 <b>Status:</b> ⏳ <i>Waiting for OTP...</i></blockquote>"
+        )
 
-        if entry["otp_now"] and entry["otp"]:
-            otp_safe = html.escape(str(entry["otp"]))
-            add_otp_received(uid)
-            num_blocks.append(
-                f"<blockquote><b>{idx}️⃣</b> {country_flag} <code>+{c_num}</code>\n"
-                f"🔑 OTP: <code>{otp_safe}</code> ✅</blockquote>"
-            )
-        else:
-            num_blocks.append(
-                f"<blockquote><b>{idx}️⃣</b> {country_flag} <code>+{c_num}</code>\n"
-                f"📩 Status: ⏳ <i>Waiting for OTP...</i></blockquote>"
-            )
-
-        btn_color = btn_colors[(idx - 1) % len(btn_colors)]
-        btn_label = f"📋 COPY #{idx}: +{c_num}"
-        if CopyTextButton is not None:
-            btn_rows.append([make_colored_btn(btn_label, color_style=btn_color, copy_text=CopyTextButton(text=f"+{c_num}"))])
-        else:
-            btn_rows.append([make_colored_btn(btn_label, color_style=btn_color, callback_data=f"copy_text_+{c_num}")])
+    btn_label = f"📋 COPY: +{c_num}"
+    if CopyTextButton is not None:
+        btn_rows.append([make_colored_btn(btn_label, color_style="success", copy_text=CopyTextButton(text=f"+{c_num}"))])
+    else:
+        btn_rows.append([make_colored_btn(btn_label, color_style="success", callback_data=f"copy_text_+{c_num}")])
 
     btn_rows.append([make_colored_btn("🌍 CHANGE COUNTRY", color_style="primary", callback_data="change_country")])
     btn_rows.append([
-        make_colored_btn("🔄 NEW 3 NUMBERS", color_style="success", callback_data="same_range"),
+        make_colored_btn("🔄 NEW NUMBER", color_style="success", callback_data="same_range"),
         make_colored_btn("📢 OTP GROUP", color_style="danger", url=OTP_GROUP_LINK),
     ])
 
     text = (
-        f"✅ <b>MI TEAM · {len(valid_entries)} NUMBERS READY</b> ✅\n"
+        f"✅ <b>MI TEAM · NUMBER READY</b> ✅\n"
         f"🌍 <b>Country:</b> {country_flag} {html.escape(country_name)} | 📱 <b>App:</b> <code>{html.escape(str(sid))}</code>\n"
         f"━━━━━━━━━━━━━━━━━━━━\n"
-        + "\n".join(num_blocks)
-        + "\n━━━━━━━━━━━━━━━━━━━━\n"
-        f"👆 <i>পছন্দমতো নাম্বার কপি করে ব্যবহার করুন, OTP অটোমেটিক চলে আসবে!</i>"
+        f"{status_block}\n"
+        f"━━━━━━━━━━━━━━━━━━━━\n"
+        f"👆 <i>নাম্বারটি কপি করে ব্যবহার করুন, OTP অটোমেটিক চলে আসবে!</i>"
     )
 
     try:
@@ -2424,7 +2418,7 @@ async def process_numbers(update_or_query, context, range_text, count):
                     _rows.append([make_colored_btn(_lbl, color_style=_clr, callback_data=f"copy_text_+{_ent['num']}")])
             _rows.append([make_colored_btn("🌍 CHANGE COUNTRY", color_style="primary", callback_data="change_country")])
             _rows.append([
-                make_colored_btn("🔄 NEW 3 NUMBERS", color_style="success", callback_data="same_range"),
+                make_colored_btn("🔄 NEW NUMBER", color_style="success", callback_data="same_range"),
                 make_colored_btn("📢 CHECK OTP GROUP", color_style="danger", url=OTP_GROUP_LINK),
             ])
             keyboard = InlineKeyboardMarkup(_rows)
@@ -3505,7 +3499,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "update": update,
             "context": context,
             "range_text": range_text,
-            "count": 3,
+            "count": 1,
         })
         return
 
@@ -4280,7 +4274,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     ]]))
                 except Exception:
                     pass
-            ok = await process_numbers(update, context, r_text, 3)
+            ok = await process_numbers(update, context, r_text, 1)
             if ok and is_old_number_delete_on():
                 try:
                     await query.message.delete()
