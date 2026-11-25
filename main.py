@@ -202,37 +202,55 @@ TEXTS = {
 }
 
 
-# ==================== MATRIX START ANIMATION ====================
+# ==================== MATRIX START ANIMATION (30 SECONDS) ====================
 
 async def play_matrix_start_animation(update: Update):
-    """MI TEAM OWNER SHAHID ম্যাট্রিক্স-স্টাইল স্টার্ট অ্যানিমেশন"""
-    frames = [
-        (
-            "<code>010110 MI TEAM 101101\n"
-            "110010 OWNER: SHAHID 01\n"
-            "001101 BOOTING CORE... 10</code>"
-        ),
-        (
-            "<code>▓▒░ ＭＩ ＴＥＡＭ · ＳＭＳ ░▒▓\n"
-            "▓▒░ ＯＷＮＥＲ : ＳＨＡＨＩＤ ░▒▓\n"
-            "101011 SYNCING RANGES... ▓</code>"
-        ),
-        (
-            "╔══════════════════════╗\n"
-            "║  ⚡ <b>MI TEAM SMS</b> ⚡    ║\n"
-            "║  👑 <b>OWNER: SHAHID</b>   ║\n"
-            "╚══════════════════════╝\n"
-            "<code>[██████████] 100% READY</code>"
-        ),
-    ]
+    """MI TEAM OWNER MR SHAHID KHAN - ৩০ সেকেন্ডের লাইভ ম্যাট্রিক্স স্টার্ট অ্যানিমেশন"""
+    banner_title = "MI TEAM OWNER MR SHAHID KHAN FREE VIERCUAL NUMBER BOT UNLIMITED OTP"
+    glyphs = "01アイウエオカキクケコサシスセソタチツテトナニヌネノ#$%&*@<>="
+    
+    def make_rain_line(width=28):
+        return "".join(random.choice(glyphs) for _ in range(width))
+
     msg = None
     try:
-        msg = await update.message.reply_text(frames[0], parse_mode="HTML")
-        for frame in frames[1:]:
-            await asyncio.sleep(0.45)
-            await msg.edit_text(frame, parse_mode="HTML")
-        await asyncio.sleep(0.35)
-        await msg.delete()
+        total_duration = 30.0
+        step_delay = 1.5
+        steps = int(total_duration / step_delay)
+        msg = await update.message.reply_text(
+            f"<code>{make_rain_line()}</code>\n"
+            f"🟢 <b>BOOTING MATRIX ENGINE...</b>\n"
+            f"<code>{make_rain_line()}</code>",
+            parse_mode="HTML",
+        )
+        for step in range(1, steps + 1):
+            await asyncio.sleep(step_delay)
+            elapsed = int(step * step_delay)
+            remaining = max(0, int(total_duration - elapsed))
+            pct = min(100, int((step / steps) * 100))
+            bars = "█" * (pct // 10) + "░" * (10 - (pct // 10))
+            
+            # Highlight sliding banner effect
+            r1 = make_rain_line(30)
+            r2 = make_rain_line(30)
+            frame = (
+                f"<code>{r1}</code>\n"
+                f"╔════════════════════════════╗\n"
+                f"║ 🟢 <b>MATRIX SYSTEM ONLINE</b> 🟢 ║\n"
+                f"╚════════════════════════════╝\n"
+                f"<blockquote>👑 <b>{banner_title}</b></blockquote>\n"
+                f"<code>{r2}</code>\n"
+                f"⚡ <code>[{bars}] {pct}%</code> | ⏳ <code>{remaining}s</code>"
+            )
+            try:
+                await msg.edit_text(frame, parse_mode="HTML")
+            except Exception:
+                pass
+        await asyncio.sleep(0.5)
+        try:
+            await msg.delete()
+        except Exception:
+            pass
     except Exception:
         pass
 
@@ -411,22 +429,32 @@ def build_otp_keyboard_v2(otp):
     ])
 
 
+def make_colored_btn(text, color_style=None, **kwargs):
+    """ইউজারের রিকোয়েস্ট অনুযায়ী রঙিন Inline Button তৈরি করে (Blue/Green/Red) এবং পুরনো ভার্সনেও নিরাপদ থাকে"""
+    if color_style in ("primary", "success", "danger"):
+        try:
+            return InlineKeyboardButton(text=text, style=color_style, **kwargs)
+        except TypeError:
+            pass
+    return InlineKeyboardButton(text=text, **kwargs)
+
+
 def build_number_keyboard(num=None, v2=False, flag="", sid=""):
-    new_btn = InlineKeyboardButton("🔄 NEW NUMBER", callback_data="same_range")
-    grp_btn = InlineKeyboardButton("📢 CHECK OTP GROUP", url=OTP_GROUP_LINK)
+    new_btn = make_colored_btn("🔄 NEW 3 NUMBERS", color_style="success", callback_data="same_range")
+    grp_btn = make_colored_btn("📢 CHECK OTP GROUP", color_style="danger", url=OTP_GROUP_LINK)
     if not v2:
         return InlineKeyboardMarkup([[new_btn], [grp_btn]])
 
     rows = []
     if sid:
-        rows.append([InlineKeyboardButton(f"📱 {sid}", callback_data="noop_svc")])
+        rows.append([make_colored_btn(f"📱 {sid}", color_style="primary", callback_data="noop_svc")])
     if num:
         label = f"{flag} +{num}".strip()
         if CopyTextButton is not None:
-            rows.append([InlineKeyboardButton(label, copy_text=CopyTextButton(text=f"+{num}"))])
+            rows.append([make_colored_btn(label, color_style="success", copy_text=CopyTextButton(text=f"+{num}"))])
         else:
-            rows.append([InlineKeyboardButton(label, callback_data=f"copy_text_+{num}")])
-    rows.append([InlineKeyboardButton("🌍 CHANGE COUNTRY", callback_data="change_country")])
+            rows.append([make_colored_btn(label, color_style="success", callback_data=f"copy_text_+{num}")])
+    rows.append([make_colored_btn("🌍 CHANGE COUNTRY", color_style="primary", callback_data="change_country")])
     rows.append([new_btn, grp_btn])
     return InlineKeyboardMarkup(rows)
 
@@ -501,10 +529,34 @@ def set_min_withdraw(key, amount):
     save_data(settings, SITE_SETTINGS_FILE)
 
 
-request_queue = asyncio.Queue()
+request_queue = None
+balance_lock = None
+otp_credit_lock = None
+
+
+def _get_queue() -> asyncio.Queue:
+    global request_queue
+    if request_queue is None:
+        request_queue = asyncio.Queue()
+    return request_queue
+
+
+def _get_balance_lock() -> asyncio.Lock:
+    global balance_lock
+    if balance_lock is None:
+        balance_lock = asyncio.Lock()
+    return balance_lock
+
+
+def _get_otp_lock() -> asyncio.Lock:
+    global otp_credit_lock
+    if otp_credit_lock is None:
+        otp_credit_lock = asyncio.Lock()
+    return otp_credit_lock
+
 
 client_async = httpx.AsyncClient(
-    timeout=httpx.Timeout(connect=3.0, read=8.0, write=5.0, pool=3.0),
+    timeout=httpx.Timeout(connect=5.0, read=10.0, write=5.0, pool=5.0),
     headers={"X-API-Key": API_KEY},
     limits=httpx.Limits(max_connections=20, max_keepalive_connections=5),
 )
@@ -622,7 +674,7 @@ def _migrate_switches(conn):
 def _get_db_connection():
     global _DB_CONN
     if _DB_CONN is None:
-        conn = sqlite3.connect(DATABASE_FILE, check_same_thread=False)
+        conn = sqlite3.connect(DATABASE_FILE, timeout=15.0, check_same_thread=False)
         try:
             conn.execute("PRAGMA journal_mode=DELETE")
             conn.execute("PRAGMA synchronous=FULL")
@@ -732,7 +784,7 @@ def create_promo_code(code: str, reward: float, max_uses: int = 50):
 async def redeem_promo_code(uid: int, code: str):
     code_u = code.strip().upper()
     uid_str = str(uid)
-    async with balance_lock:
+    async with _get_balance_lock():
         promos = load_data(PROMO_CODES_FILE)
         p = promos.get(code_u)
         if not p:
@@ -843,6 +895,22 @@ def save_number_range_info(uid, number, range_text):
         "country": f"{flag} {name}",
     }
     save_range_db(db)
+
+
+def format_user_identity(uid):
+    """গ্রুপ মেসেজে দেখানোর জন্য ইউজারের নাম, ইউজারনেম ও আইডি ফরম্যাট করে"""
+    uid_str = str(uid)
+    rec = load_data(USER_DATA_FILE).get(uid_str, {})
+    raw_name = (rec.get("full_name") or "").strip()
+    raw_uname = (rec.get("username") or "").strip().lstrip("@")
+    if raw_name:
+        safe_name = html.escape(raw_name)
+    elif raw_uname:
+        safe_name = f"@{html.escape(raw_uname)}"
+    else:
+        safe_name = f"User {html.escape(uid_str)}"
+    uname_part = f" (@{html.escape(raw_uname)})" if raw_uname else ""
+    return f"<b>{safe_name}</b>{uname_part} — <code>{html.escape(uid_str)}</code>"
 
 
 # ==================== COUNTRY MAPPING ====================
@@ -1088,7 +1156,7 @@ async def set_user_lang(uid, lang):
     if lang not in TEXTS:
         lang = DEFAULT_LANG
     uid = str(uid)
-    async with balance_lock:
+    async with _get_balance_lock():
         data = load_data()
         if uid not in data:
             data[uid] = {"user_id": uid, "balance": 0.0, "total_numbers": 0, "referral_count": 0}
@@ -1251,9 +1319,6 @@ def _guard_user_access(uid: int) -> bool:
 
 # ==================== USER & BALANCE FUNCTIONS ====================
 
-balance_lock = asyncio.Lock()
-
-
 def get_user(uid):
     uid = str(uid)
     data = load_data()
@@ -1265,7 +1330,7 @@ def get_user(uid):
 
 async def update_db_balance(uid, amount):
     uid = str(uid)
-    async with balance_lock:
+    async with _get_balance_lock():
         data = load_data()
         if uid not in data:
             data[uid] = {"user_id": uid, "balance": 0.0, "total_numbers": 0, "referral_count": 0}
@@ -1276,7 +1341,7 @@ async def update_db_balance(uid, amount):
 
 async def try_deduct_balance(uid, amount):
     uid = str(uid)
-    async with balance_lock:
+    async with _get_balance_lock():
         data = load_data()
         if uid not in data:
             data[uid] = {"user_id": uid, "balance": 0.0, "total_numbers": 0, "referral_count": 0}
@@ -1288,12 +1353,9 @@ async def try_deduct_balance(uid, amount):
         return data[uid]["balance"]
 
 
-otp_credit_lock = asyncio.Lock()
-
-
 async def credit_otp_if_new(sms_key, uid, otp_code=None):
     uid = str(uid)
-    async with otp_credit_lock:
+    async with _get_otp_lock():
         paid_data = load_data(PAID_SMS_FILE)
         if sms_key in paid_data:
             return False
@@ -1503,7 +1565,7 @@ async def remember_user_name(user):
         uid_str = str(user.id)
         full = (user.full_name or "").strip()
         uname = user.username or ""
-        async with balance_lock:
+        async with _get_balance_lock():
             data = load_data(USER_DATA_FILE)
             rec = data.get(uid_str)
             if rec is None:
@@ -1716,6 +1778,14 @@ _SVC_NAME_MAX = 11
 _SVC_HIGH = 10
 _SVC_MID = 3
 
+TARGET_FEATURED_APPS = [
+    {"key": "IMO", "label": "💙 IMO", "color": "primary"},
+    {"key": "TIKTOK", "label": "🎵 TIK TOK", "color": "danger"},
+    {"key": "FACEBOOK", "label": "📘 FACEBOOK", "color": "primary"},
+    {"key": "WHATSAPP", "label": "💬 WHATSAPP", "color": "success"},
+    {"key": "INSTAGRAM", "label": "📸 INSTAGRAM", "color": "danger"},
+]
+
 _SVC_ICONS = {
     "FACEBOOK": "📘", "INSTAGRAM": "📸", "WHATSAPP": "💬", "TELEGRAM": "✈️",
     "TIKTOK": "🎵", "IMO": "💙", "TWILIO": "🔔", "BOLT": "⚡", "UBER": "🚕",
@@ -1723,6 +1793,59 @@ _SVC_ICONS = {
     "LETZ": "🎯", "GOOGLE": "🔍", "TWITTER": "🐦", "SNAPCHAT": "👻",
     "PAYPAL": "💰", "AMAZON": "📦", "MICROSOFT": "🪟", "APPLE": "🍎",
 }
+
+_COLOR_CYCLE = ["primary", "success", "danger"]
+
+
+def _get_merged_services():
+    """API সার্ভিসগুলোর সাথে IMO, TIKTOK, FACEBOOK, WHATSAPP, INSTAGRAM নিশ্চিত করে"""
+    raw_services = list(get_cached_services() or [])
+    disabled = set(get_disabled_services())
+    
+    # Collect all available ranges across services as fallback pool
+    all_ranges_pool = []
+    for s in raw_services:
+        for r in s.get("ranges", []):
+            if r not in all_ranges_pool:
+                all_ranges_pool.append(r)
+
+    merged = []
+    used_indices = set()
+
+    for app_cfg in TARGET_FEATURED_APPS:
+        kw = app_cfg["key"]
+        if kw in disabled:
+            continue
+        matched_ranges = []
+        for idx, s in enumerate(raw_services):
+            sid_up = str(s.get("sid", "")).upper()
+            if kw in sid_up or (kw == "TIKTOK" and "TIK TOK" in sid_up) or (kw == "WHATSAPP" and "WHAT'S APP" in sid_up):
+                used_indices.add(idx)
+                for r in s.get("ranges", []):
+                    if r not in matched_ranges:
+                        matched_ranges.append(r)
+        if not matched_ranges:
+            matched_ranges = all_ranges_pool[:24]
+        merged.append({
+            "sid": kw,
+            "display": app_cfg["label"],
+            "color": app_cfg["color"],
+            "ranges": matched_ranges,
+        })
+
+    for idx, s in enumerate(raw_services):
+        if idx in used_indices:
+            continue
+        sid = s.get("sid", f"Service {idx+1}")
+        if sid in disabled:
+            continue
+        merged.append({
+            "sid": sid,
+            "display": f"{_svc_icon(sid)} {_svc_display_name(sid)}",
+            "color": _COLOR_CYCLE[len(merged) % len(_COLOR_CYCLE)],
+            "ranges": s.get("ranges", []),
+        })
+    return merged
 
 
 def _svc_display_name(sid):
@@ -1766,42 +1889,44 @@ def set_service_design(v):
 def _legend_html():
     v = get_service_design()
     if v == 2:
-        return "\n<i>🟢 Many  🔵 Medium  🔴 Few</i>"
+        return "\n<i>🟢 Many  🔵 Medium  🔴 Few  |  📦 3 Numbers at Once</i>"
     if v == 3:
-        return "\n<i>▰▰▰ stock level  ·  🟢 Many  🔵 Medium  🔴 Few</i>"
-    return ""
+        return "\n<i>▰▰▰ stock level  ·  📦 3 Numbers at Once</i>"
+    return "\n<i>📦 3 Numbers at Once</i>"
 
 
 def _build_services_keyboard_v1(services):
     buttons = []
     for i, svc in enumerate(services):
-        sid = svc.get("sid", f"Service {i+1}")
-        label = f"🚀 {sid} ({len(svc.get('ranges', []))})"
-        buttons.append(InlineKeyboardButton(label, callback_data=f"svc_{i}"))
-    max_len = max((len(btn.text) for btn in buttons), default=0)
-    cols = 2 if max_len > 14 else 3
-    rows = [buttons[j:j + cols] for j in range(0, len(buttons), cols)]
+        sid = svc.get("display") or svc.get("sid", f"Service {i+1}")
+        color = svc.get("color") or _COLOR_CYCLE[i % 3]
+        label = f"{sid} ({len(svc.get('ranges', []))})"
+        buttons.append(make_colored_btn(label, color_style=color, callback_data=f"svc_{i}"))
+    rows = [buttons[j:j + 2] for j in range(0, len(buttons), 2)]
     rows.append([
-        InlineKeyboardButton("⚙️ CUSTOM RANGE", callback_data="custom_range"),
-        InlineKeyboardButton("🔎 SEARCH CODE", callback_data="search_range_code"),
+        make_colored_btn("⚙️ CUSTOM RANGE", color_style="primary", callback_data="custom_range"),
+        make_colored_btn("🔎 SEARCH CODE", color_style="success", callback_data="search_range_code"),
     ])
     return InlineKeyboardMarkup(rows)
 
 
 def _build_services_keyboard_v2(services):
-    items = [(i, svc.get("sid", f"Service {i+1}"), len(svc.get("ranges", []))) for i, svc in enumerate(services)]
-    items.sort(key=lambda t: -t[2])
-    buttons = [
-        InlineKeyboardButton(
-            f"{_svc_icon(sid)} {_svc_display_name(sid)} · {count}",
-            callback_data=f"svc_{i}",
+    buttons = []
+    for i, svc in enumerate(services):
+        disp = svc.get("display") or f"{_svc_icon(svc.get('sid', ''))} {_svc_display_name(svc.get('sid', ''))}"
+        count = len(svc.get("ranges", []))
+        color = svc.get("color") or _COLOR_CYCLE[i % 3]
+        buttons.append(
+            make_colored_btn(
+                f"{disp} · {count}",
+                color_style=color,
+                callback_data=f"svc_{i}",
+            )
         )
-        for i, sid, count in items
-    ]
     rows = [buttons[j:j + 2] for j in range(0, len(buttons), 2)]
     rows.append([
-        InlineKeyboardButton("⚙️ CUSTOM RANGE", callback_data="custom_range"),
-        InlineKeyboardButton("🔎 SEARCH CODE", callback_data="search_range_code"),
+        make_colored_btn("⚙️ CUSTOM RANGE", color_style="primary", callback_data="custom_range"),
+        make_colored_btn("🔎 SEARCH CODE", color_style="success", callback_data="search_range_code"),
     ])
     return InlineKeyboardMarkup(rows)
 
@@ -1815,22 +1940,24 @@ def _svc_v3_name(sid):
 
 
 def _build_services_keyboard_v3(services):
-    items = [(i, svc.get("sid", f"Service {i+1}"), len(svc.get("ranges", []))) for i, svc in enumerate(services)]
-    items.sort(key=lambda t: -t[2])
     buttons = []
-    for i, sid, count in items:
+    for i, svc in enumerate(services):
+        sid = svc.get("sid", f"Service {i+1}")
+        count = len(svc.get("ranges", []))
+        color = svc.get("color") or _COLOR_CYCLE[i % 3]
         filled = 0 if count <= 0 else (3 if count >= _SVC_HIGH else 2 if count >= _SVC_MID else 1)
         bar = "▰" * filled + "▱" * (3 - filled)
         buttons.append(
-            InlineKeyboardButton(
+            make_colored_btn(
                 f"{_svc_v3_name(sid)} {bar} {count}",
+                color_style=color,
                 callback_data=f"svc_{i}",
             )
         )
     rows = [buttons[j:j + 2] for j in range(0, len(buttons), 2)]
     rows.append([
-        InlineKeyboardButton("⚙️ CUSTOM RANGE", callback_data="custom_range"),
-        InlineKeyboardButton("🔎 SEARCH CODE", callback_data="search_range_code"),
+        make_colored_btn("⚙️ CUSTOM RANGE", color_style="primary", callback_data="custom_range"),
+        make_colored_btn("🔎 SEARCH CODE", color_style="success", callback_data="search_range_code"),
     ])
     return InlineKeyboardMarkup(rows)
 
@@ -1854,9 +1981,10 @@ def _build_countries_keyboard(ranges, service_idx):
         label = f"{flag} {cname}"
         if label not in seen:
             seen[label] = i
-            btns.append(InlineKeyboardButton(label, callback_data=f"rng_{i}"))
+            color = _COLOR_CYCLE[len(btns) % 3]
+            btns.append(make_colored_btn(label, color_style=color, callback_data=f"rng_{i}"))
     rows = [btns[j:j + 2] for j in range(0, len(btns), 2)]
-    rows.append([InlineKeyboardButton("◀️ BACK", callback_data="back_services")])
+    rows.append([make_colored_btn("◀️ BACK", color_style="danger", callback_data="back_services")])
     return InlineKeyboardMarkup(rows)
 
 
@@ -1866,13 +1994,10 @@ async def show_app_selection(update, context):
         await update.message.reply_text(tr(uid, "banned"), reply_markup=main_keyboard(uid))
         return
 
-    services = get_cached_services()
-    if not services:
+    if not get_cached_services():
         await _do_liveaccess_fetch()
-        services = get_cached_services()
 
-    disabled = get_disabled_services()
-    services = [s for s in services if s.get("sid") not in disabled]
+    services = _get_merged_services()
 
     if not services:
         await update.message.reply_text(
@@ -1885,7 +2010,7 @@ async def show_app_selection(update, context):
     context.user_data["la_services"] = services
     await update.message.reply_text(
         "📞 <b>MI TEAM · GET NUMBER</b>\n\n"
-        "<blockquote>✨ Select your preferred <b>Service</b> from below:</blockquote>" + _legend_html(),
+        "<blockquote>✨ Select your preferred <b>App / Service</b> (IMO, TikTok, Facebook, WhatsApp, Instagram):</blockquote>" + _legend_html(),
         parse_mode="HTML",
         reply_markup=_build_services_keyboard(services),
     )
@@ -1894,7 +2019,6 @@ async def show_app_selection(update, context):
 # ==================== AUTO OTP MONITOR ====================
 
 async def monitor_loop(app):
-    range_db = load_data(DATA_RANGE_FILE)
     processed_in_session = set()
 
     while True:
@@ -1904,6 +2028,7 @@ async def monitor_loop(app):
         if len(processed_in_session) > 5000:
             processed_in_session.clear()
         try:
+            range_db = load_data(DATA_RANGE_FILE)
             otps = await fetch_recent_otps()
             for otp in otps:
                 num = normalize_number(otp.get("number", ""))
@@ -1935,6 +2060,7 @@ async def monitor_loop(app):
                     clean_num = num.replace("+", "").strip()
                     full_number = f"+{clean_num}"
                     masked_number = f"+{mask_number(clean_num)}"
+                    user_identity_html = format_user_identity(details["uid"])
 
                     safe_full_sms = html.escape(str(full_sms))
                     safe_otp_code = html.escape(str(otp_code))
@@ -1957,11 +2083,12 @@ async def monitor_loop(app):
 
                     group_msg = (
                         f"✅ <b>OTP RECEIVE SUCCESSFUL · MI TEAM</b> ✅{speed_txt}\n\n"
-                        f"<blockquote>📶 RANGE: <code>{num_range_info}</code></blockquote>\n"
-                        f"<blockquote>🌍 COUNTRY: <code>{country_flag} {country_name}</code></blockquote>\n"
-                        f"<blockquote>📱 SERVICE: <code>{service_name}</code></blockquote>\n"
-                        f"<blockquote>📞 NUMBER: <code>{masked_number}</code></blockquote>\n"
-                        f"<blockquote>🔑 OTP: <code>{safe_otp_code}</code></blockquote>\n\n"
+                        f"<blockquote>👤 USER: {user_identity_html}\n"
+                        f"📶 RANGE: <code>{num_range_info}</code>\n"
+                        f"🌍 COUNTRY: <code>{country_flag} {country_name}</code>\n"
+                        f"📱 SERVICE: <code>{service_name}</code>\n"
+                        f"📞 NUMBER: <code>{masked_number}</code>\n"
+                        f"🔑 OTP: <code>{safe_otp_code}</code></blockquote>\n\n"
                         f"<blockquote>📩 FULL SMS:\n<code>{safe_full_sms}</code></blockquote>"
                     )
 
@@ -2017,72 +2144,125 @@ async def fetch_number_async(range_str):
 
 async def fast_allocate_number(query, context, range_text, sid):
     uid = query.from_user.id
+    await remember_user_name(query.from_user)
 
     if not _guard_user_access(uid):
         await query.message.edit_text(tr(uid, "banned"))
         return
 
+    # সুন্দর ক্লিক ও লোডিং অ্যানিমেশন
+    click_frames = [
+        f"⚡ <b>CONNECTING TO {html.escape(str(sid))} SERVER...</b>\n<code>[███░░░░░░░] 30%</code>",
+        f"🔍 <b>FETCHING 3 FRESH NUMBERS...</b>\n<code>[███████░░░] 70%</code>",
+        f"✨ <b>PREPARING YOUR NUMBERS...</b>\n<code>[██████████] 100%</code>",
+    ]
+    for cf in click_frames:
+        try:
+            await query.message.edit_text(cf, parse_mode="HTML")
+            await asyncio.sleep(0.25)
+        except Exception:
+            pass
+
     try:
-        res = await fetch_number_async(range_text)
+        # একসাথে ৩টি নাম্বার ফেচ করা হচ্ছে
+        results = await asyncio.gather(
+            fetch_number_async(range_text),
+            fetch_number_async(range_text),
+            fetch_number_async(range_text),
+        )
     except Exception as e:
         await query.message.edit_text(f"❌ Server error: {str(e)[:100]}")
         return
 
-    if not res or not res.get("number"):
+    valid_entries = []
+    seen_nums = set()
+    for res in results:
+        if res and res.get("number"):
+            c_num = normalize_number(res["number"])
+            if c_num and c_num not in seen_nums:
+                seen_nums.add(c_num)
+                valid_entries.append({
+                    "num": c_num,
+                    "otp_now": bool(res.get("otp_now", False)),
+                    "otp": res.get("otp"),
+                    "sms": res.get("sms"),
+                })
+
+    if not valid_entries:
         await query.message.edit_text(
             "❌ <b>No number found.</b>\n\n"
             "<blockquote>⚠️ No number is available in this range right now, or the server is busy.\n"
             "Please try another range.</blockquote>",
             parse_mode="HTML",
             reply_markup=InlineKeyboardMarkup([[
-                InlineKeyboardButton("🔙 BACK", callback_data="back_services")
+                make_colored_btn("🔙 BACK", color_style="danger", callback_data="back_services")
             ]]),
         )
         return
 
-    clean_num = normalize_number(res["number"])
-    add_number_taken(uid, 1)
+    add_number_taken(uid, len(valid_entries))
     last_range[uid] = range_text
     last_service[uid] = {"range": range_text, "sid": sid}
-    active_numbers[clean_num] = {"uid": uid, "range": range_text, "timestamp": datetime.now()}
-    save_number_range_info(uid, clean_num, range_text)
-    record_user_number_history(uid, clean_num, range_text, res.get("otp") if res.get("otp_now") else None)
 
-    country_flag, country_name = get_country_info(clean_num)
-    _v2 = is_number_template_v2_on()
+    country_flag, country_name = get_country_info(valid_entries[0]["num"])
 
-    if res.get("otp_now") and res.get("otp"):
-        otp_safe = html.escape(str(res["otp"]))
-        sms_safe = html.escape(str(res.get("sms") or ""))
-        add_otp_received(uid)
-        text = build_number_text_v2(country_flag, clean_num, res["otp"], res.get("sms")) if _v2 else (
-            f"✅ <b>YOUR NUMBER</b> ✅\n\n"
-            f"<blockquote>🌍 COUNTRY: <code>{country_flag} {html.escape(country_name)}</code></blockquote>\n"
-            f"<blockquote>📶 RANGE: <code>{range_text}</code></blockquote>\n"
-            f"<blockquote>📞 NUMBER: <code>+{clean_num}</code></blockquote>\n"
-            f"<blockquote>🔑 OTP: <code>{otp_safe}</code></blockquote>"
-            + (f"\n<blockquote>📩 SMS: <code>{sms_safe}</code></blockquote>" if sms_safe else "")
-            + "\n\n<b>✅ OTP RECEIVED INSTANTLY!</b>"
-        )
-    else:
-        text = build_number_text_v2(country_flag, clean_num) if _v2 else (
-            f"✅ <b>YOUR NUMBER</b> ✅\n\n"
-            f"<blockquote>🌍 COUNTRY: <code>{country_flag} {html.escape(country_name)}</code></blockquote>\n"
-            f"<blockquote>📶 RANGE: <code>{range_text}</code></blockquote>\n"
-            f"<blockquote>📞 NUMBER: <code>+{clean_num}</code></blockquote>\n\n"
-            f"<b>📩 SMS STATUS: ⏳ WAITING... (Auto-expires in 60m)</b>"
-        )
+    num_blocks = []
+    btn_rows = []
+    if sid:
+        btn_rows.append([make_colored_btn(f"📱 APP: {sid} ({len(valid_entries)} NUMBERS)", color_style="primary", callback_data="noop_svc")])
 
-    keyboard = build_number_keyboard(clean_num, _v2, country_flag, sid)
+    btn_colors = ["success", "primary", "danger"]
+    for idx, entry in enumerate(valid_entries, 1):
+        c_num = entry["num"]
+        active_numbers[c_num] = {"uid": uid, "range": range_text, "timestamp": datetime.now()}
+        save_number_range_info(uid, c_num, range_text)
+        record_user_number_history(uid, c_num, range_text, entry["otp"] if entry["otp_now"] else None)
+
+        if entry["otp_now"] and entry["otp"]:
+            otp_safe = html.escape(str(entry["otp"]))
+            add_otp_received(uid)
+            num_blocks.append(
+                f"<blockquote><b>{idx}️⃣</b> {country_flag} <code>+{c_num}</code>\n"
+                f"🔑 OTP: <code>{otp_safe}</code> ✅</blockquote>"
+            )
+        else:
+            num_blocks.append(
+                f"<blockquote><b>{idx}️⃣</b> {country_flag} <code>+{c_num}</code>\n"
+                f"📩 Status: ⏳ <i>Waiting for OTP...</i></blockquote>"
+            )
+
+        btn_color = btn_colors[(idx - 1) % len(btn_colors)]
+        btn_label = f"📋 COPY #{idx}: +{c_num}"
+        if CopyTextButton is not None:
+            btn_rows.append([make_colored_btn(btn_label, color_style=btn_color, copy_text=CopyTextButton(text=f"+{c_num}"))])
+        else:
+            btn_rows.append([make_colored_btn(btn_label, color_style=btn_color, callback_data=f"copy_text_+{c_num}")])
+
+    btn_rows.append([make_colored_btn("🌍 CHANGE COUNTRY", color_style="primary", callback_data="change_country")])
+    btn_rows.append([
+        make_colored_btn("🔄 NEW 3 NUMBERS", color_style="success", callback_data="same_range"),
+        make_colored_btn("📢 OTP GROUP", color_style="danger", url=OTP_GROUP_LINK),
+    ])
+
+    text = (
+        f"✅ <b>MI TEAM · {len(valid_entries)} NUMBERS READY</b> ✅\n"
+        f"🌍 <b>Country:</b> {country_flag} {html.escape(country_name)} | 📱 <b>App:</b> <code>{html.escape(str(sid))}</code>\n"
+        f"━━━━━━━━━━━━━━━━━━━━\n"
+        + "\n".join(num_blocks)
+        + "\n━━━━━━━━━━━━━━━━━━━━\n"
+        f"👆 <i>পছন্দমতো নাম্বার কপি করে ব্যবহার করুন, OTP অটোমেটিক চলে আসবে!</i>"
+    )
+
     try:
-        await query.message.edit_text(text, parse_mode="HTML", reply_markup=keyboard)
+        await query.message.edit_text(text, parse_mode="HTML", reply_markup=InlineKeyboardMarkup(btn_rows))
     except Exception as e:
         print(f"fast_allocate edit error: {e}")
 
 
 async def worker():
+    q = _get_queue()
     while True:
-        task = await request_queue.get()
+        task = await q.get()
         try:
             if task["type"] == "process_numbers":
                 await process_numbers(task["update"], task["context"], task["range_text"], task["count"])
@@ -2093,12 +2273,13 @@ async def worker():
         except Exception as e:
             print(f"Worker Error: {e}")
         finally:
-            request_queue.task_done()
+            q.task_done()
 
 
 async def process_auto_number(update, context, range_text):
     uid = update.effective_user.id
     chat_id = update.effective_chat.id
+    await remember_user_name(update.effective_user)
 
     if not _guard_user_access(uid):
         await context.bot.send_message(chat_id=chat_id, text=tr(uid, "banned"), reply_markup=main_keyboard(uid))
@@ -2157,9 +2338,12 @@ async def process_numbers(update_or_query, context, range_text, count):
     if isinstance(update_or_query, Update) and update_or_query.callback_query:
         uid = update_or_query.callback_query.from_user.id
         chat_id = update_or_query.callback_query.message.chat_id
+        await remember_user_name(update_or_query.callback_query.from_user)
     else:
         uid = update_or_query.effective_user.id
         chat_id = update_or_query.effective_chat.id
+        if update_or_query.effective_user:
+            await remember_user_name(update_or_query.effective_user)
 
     if not _guard_user_access(uid):
         await context.bot.send_message(chat_id=chat_id, text=tr(uid, "banned"), reply_markup=main_keyboard(uid))
@@ -2234,7 +2418,31 @@ async def process_numbers(update_or_query, context, range_text, count):
 
         _svc = last_service.get(uid) or {}
         _sid = _svc.get("sid", "") if _svc.get("range") == range_text else ""
-        keyboard = build_number_keyboard(num_entries[0]["num"], _v2, country_flag, _sid)
+        if len(num_entries) > 1:
+            _rows = []
+            _c_cycle = ["success", "primary", "danger"]
+            for _idx, _ent in enumerate(num_entries, 1):
+                _lbl = f"📋 COPY #{_idx}: +{_ent['num']}"
+                _clr = _c_cycle[(_idx - 1) % 3]
+                if CopyTextButton is not None:
+                    _rows.append([make_colored_btn(_lbl, color_style=_clr, copy_text=CopyTextButton(text=f"+{_ent['num']}"))])
+                else:
+                    _rows.append([make_colored_btn(_lbl, color_style=_clr, callback_data=f"copy_text_+{_ent['num']}")])
+            _rows.append([make_colored_btn("🌍 CHANGE COUNTRY", color_style="primary", callback_data="change_country")])
+            _rows.append([
+                make_colored_btn("🔄 NEW 3 NUMBERS", color_style="success", callback_data="same_range"),
+                make_colored_btn("📢 CHECK OTP GROUP", color_style="danger", url=OTP_GROUP_LINK),
+            ])
+            keyboard = InlineKeyboardMarkup(_rows)
+            final_text = (
+                f"✅ <b>MI TEAM · {len(num_entries)} NUMBERS READY</b> ✅\n\n"
+                f"<blockquote>🌍 COUNTRY: <code>{country_flag} {country_name}</code></blockquote>\n"
+                f"<blockquote>📶 RANGE: <code>{range_text}</code></blockquote>\n\n"
+                f"{num_list_text}\n\n"
+                f"<b>{sms_status}</b>"
+            )
+        else:
+            keyboard = build_number_keyboard(num_entries[0]["num"], _v2, country_flag, _sid)
 
         await status_msg.edit_text(final_text, parse_mode="HTML", reply_markup=keyboard)
         return True
@@ -3298,12 +3506,12 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 reply_markup=main_keyboard(uid),
             )
             return
-        await request_queue.put({
+        await _get_queue().put({
             "type": "process_numbers",
             "update": update,
             "context": context,
             "range_text": range_text,
-            "count": 1,
+            "count": 3,
         })
         return
 
@@ -3418,7 +3626,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if context.user_data.get("mode") == "search_otp":
         context.user_data["mode"] = None
-        await request_queue.put({
+        await _get_queue().put({
             "type": "search_otp",
             "update": update,
             "context": context,
@@ -3709,7 +3917,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     uid = update.effective_user.id
     uid_str = str(uid)
 
-    async with balance_lock:
+    async with _get_balance_lock():
         existing_data = load_data(USER_DATA_FILE)
         is_new_user = uid_str not in existing_data
         if is_new_user:
@@ -3731,7 +3939,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if args:
         param = args[0]
         if is_range_request(param):
-            await request_queue.put({"type": "auto_number", "update": update, "context": context, "range_text": param})
+            await _get_queue().put({"type": "auto_number", "update": update, "context": context, "range_text": param})
             return
         if is_referral_request(param) and is_new_user:
             try:
@@ -3748,7 +3956,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     bonus = get_referral_bonus()
                     await update_db_balance(referrer_id, bonus)
                     add_referral_earning(referrer_id, bonus)
-                    async with balance_lock:
+                    async with _get_balance_lock():
                         _ud = load_data(USER_DATA_FILE)
                         if uid_str in _ud:
                             _ud[uid_str]["referred_by"] = str(referrer_id)
@@ -3777,6 +3985,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     uid = query.from_user.id
     data = query.data
     await query.answer()
+    await remember_user_name(query.from_user)
 
     if not _guard_user_access(uid):
         await query.edit_message_text(tr(uid, "banned"))
@@ -4044,9 +4253,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     if data == "back_services":
-        services = get_cached_services() or context.user_data.get("la_services", [])
-        disabled = get_disabled_services()
-        services = [s for s in services if s.get("sid") not in disabled]
+        services = _get_merged_services() or context.user_data.get("la_services", [])
         if not services:
             await query.message.edit_text("❌ Could not load services. Please try again later.")
             return
@@ -4079,7 +4286,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     ]]))
                 except Exception:
                     pass
-            ok = await process_numbers(update, context, r_text, 1)
+            ok = await process_numbers(update, context, r_text, 3)
             if ok and is_old_number_delete_on():
                 try:
                     await query.message.delete()
@@ -4143,6 +4350,9 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # ==================== MAIN & POST INIT ====================
 
 async def post_init(application):
+    _get_queue()
+    _get_balance_lock()
+    _get_otp_lock()
     for _ in range(5):
         asyncio.create_task(worker())
     asyncio.create_task(monitor_loop(application))
